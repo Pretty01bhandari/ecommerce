@@ -13,6 +13,12 @@ if($check_user>0){   //from here we take users login data and give the error mes
     $_SESSION['USER_LOGIN']='yes';
     $_SESSION['USER_ID']=$row['id'];
     $_SESSION['USER_NAME']=$row['name'];
+
+    if(isset($_SESSION['WISHLIST_ID']) && $_SESSION['WISHLIST_ID']!=''){
+        wishlist_add($con,$_SESSION['USER_ID'],$_SESSION['WISHLIST_ID']);
+        unset($_SESSION['WISHLIST_ID']);
+    }
+
     echo "valid";
 }else{
     echo "wrong";

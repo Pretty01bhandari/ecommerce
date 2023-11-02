@@ -1,5 +1,17 @@
 <?php 
 require('top.php');
+if(!isset($_SESSION['USER_LOGIN'])){
+   ?>
+   <script>
+    window.location.href='index.php';
+   </script>
+   <?php
+}
+$uid=$_SESSION['USER_ID'];
+
+
+$res=mysqli_query($con,"select product.name,product.image,product.price,product.mrp,wishlist.id from product,wishlist 
+where wishlist.product_id=product.id and wishlist.user_id='$uid'");
 ?>
 
  <div class="ht__bradcaump__area" style="background: rgba(0, 0, 0, 0) url(images/bg/4.jpeg) no-repeat scroll center center / cover ;">
@@ -11,7 +23,7 @@ require('top.php');
                                 <nav class="bradcaump-inner">
                                   <a class="breadcrumb-item" href="index.php">Home</a>
                                   <span class="brd-separetor"><i class="zmdi zmdi-chevron-right"></i></span>
-                                  <span class="breadcrumb-item active">shopping cart</span>
+                                  <span class="breadcrumb-item active">Wishlist</span>
                                 </nav>
                             </div>
                         </div>
@@ -32,39 +44,27 @@ require('top.php');
                                         <tr>
                                             <th class="product-thumbnail">products</th>
                                             <th class="product-name">name of products</th>
-                                            <th class="product-price">Price</th>
-                                            <th class="product-quantity">Quantity</th>
-                                            <th class="product-subtotal">Total</th>
                                             <th class="product-remove">Remove</th>
                                         </tr>
                                     </thead>
                                     <tbody>
 										<?php
-										if(isset($_SESSION['cart'])){
-											foreach($_SESSION['cart'] as $key=>$val){
-											$productArr=get_product($con,'','',$key);
-											$pname=$productArr[0]['name'];
-											$mrp=$productArr[0]['mrp'];
-											$price=$productArr[0]['price'];
-											$image=$productArr[0]['image'];
-											$qty=$val['qty'];
+										while($row=mysqli_fetch_assoc($res)){
 											?>
 											<tr>
-												<td class="product-thumbnail"><a href="#"><img src="<?php echo PRODUCT_IMAGE_SITE_PATH.$image?>"  /></a></td>
-												<td class="product-name"><a href="#"><?php echo $pname?></a>
+												<td class="product-thumbnail"><a href="#"><img src="<?php 
+                                                echo PRODUCT_IMAGE_SITE_PATH.$row['image']?>"  /></a></td>
+												<td class="product-name"><a href="#"><?php echo $row['name']?></a>
 													<ul  class="pro__prize">
-														<li class="old__prize"><?php echo $mrp?></li>
-														<li><?php echo $price?></li>
+														<li class="old__prize"><?php echo $row['mrp']?></li>
+														<li><?php echo $row['price']?></li>
 													</ul>
 												</td>
-												<td class="product-price"><span class="amount"><?php echo $price?></span></td>
-												<td class="product-quantity"><input type="number" id="<?php echo $key?>qty" value="<?php echo $qty?>" />
-												<br/><a href="javascript:void(0)" onclick="manage_cart('<?php echo $key?>','update')">update</a>
-												</td>
-												<td class="product-subtotal"><?php echo $qty*$price?></td>
-												<td class="product-remove"><a href="javascript:void(0)" onclick="manage_cart('<?php echo $key?>','remove')"><i class="icon-trash icons"></i></a></td>
+												<td class="product-remove"><a href="wishlist.php?wishlist_id=<?php echo $row['id']?>">
+                                                <i class="icon-trash icons"></i></a>
+                                                </td>
 											</tr>
-											<?php } } ?>
+											<?php } ?>
                                     </tbody>
                                 </table>
                             </div>
@@ -87,4 +87,4 @@ require('top.php');
         </div>
         
 										
-<?php require('footer.php')?>       
+<?php require('footer.php')?>

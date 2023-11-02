@@ -92,7 +92,8 @@ if($product_id>0){
                                     
                                     </div>
                                 </div>
-                                <a class="fr__btn" href="javascript:void(0)" onclick="manage_cart('<?php echo $get_product['0']['id']?>','add')">Add to cart</a>
+                                <a class="fr__btn" href="javascript:void(0)"
+                                 onclick="manage_cart('<?php echo $get_product['0']['id']?>','add')">Add to cart</a>
                             </div>
                         </div>
                     </div>
