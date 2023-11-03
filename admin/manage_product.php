@@ -11,7 +11,7 @@
     $meta_title='';
     $meta_desc='';
     $meta_keyword='';
-
+    $best_seller='';
 
     $msg='';
     $image_required='required';
@@ -32,12 +32,13 @@
             $meta_title=$row['meta_title'];
             $meta_desc=$row['meta_desc'];
             $meta_keyword=$row['meta_keyword'];
+            $best_seller=$row['best_seller'];
         }else{
             header('location:product.php');
             die();  
         }
     }
-
+    //where product ko data gets submit
     if(isset($_POST['submit'])){
         $categories_id=get_safe_value($con,$_POST['categories_id']);
         $name=get_safe_value($con,$_POST['name']);
@@ -49,6 +50,7 @@
         $meta_title=get_safe_value($con,$_POST['meta_title']);
         $meta_desc=get_safe_value($con,$_POST['meta_desc']);
         $meta_keyword=get_safe_value($con,$_POST['meta_keyword']);
+        $best_seller=get_safe_value($con,$_POST['best_seller']);
 
 
         $res=mysqli_query($con,"select * from product where name='$name'");
@@ -79,12 +81,12 @@
                 move_uploaded_file($_FILES['image']['tmp_name'],PRODUCT_IMAGE_SERVER_PATH.$image);
                 $update_sql="update product set categories_id='$categories_id',name='$name',
                 mrp='$mrp',price='$price',qty='$qty',short_desc='$short_desc',description='$description'
-                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',image='$image'
-                 where id='$id'";
+                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',image='$image',
+                best_seller='$best_seller' where id='$id'";
                 }else{
                     $update_sql="update product set categories_id='$categories_id',name='$name',
                 mrp='$mrp',price='$price',qty='$qty',short_desc='$short_desc',description='$description'
-                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword'
+                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',best_seller='$best_seller
                  where id='$id'";
                 }
                 mysqli_query($con,$update_sql);
@@ -94,7 +96,7 @@
                 mysqli_query($con,"insert into product(categories_id,name,mrp,price,qty,short_desc,
                 description,meta_title,meta_desc,meta_keyword,status,image)
                 values('$categories_id','$name','$mrp','$price','$qty','$short_desc','$description',
-                '$meta_title','$meta_desc','$meta_keyword',1,'$image')");
+                '$meta_title','$meta_desc','$meta_keyword',1,'$image','$best_seller')");
 
                }
                header('location:product.php');
@@ -138,6 +140,24 @@
                             <input type="text" name="name" placeholder="Enter product name" class="
                             form-control" required value="<?php echo $name ?>">
                             </div>
+                            <div class="form-group">
+                            <label for="categories" class=" form-control-label">Best Seller
+                            </label>
+                            <select class="form-control" name="best_seller" required>
+                                <option value="">Select</option>
+                                <?php 
+                                if($best_seller==1){
+                                    echo '<option value="1" selected>Yes</option>
+                                          <option value="0">No</option>';
+                                }elseif($best_seller==0){
+                                    echo '<option value="1" >Yes</option>
+                                          <option value="0" selected>No</option>';
+                                }else{
+                                    echo '<option value="1">Yes</option>
+                                          <option value="0">No</option>';
+                                }
+                                ?>
+                            </select>
 
                             <div class="form-group">
                             <label for="categories" class=" form-control-label">MRP

@@ -85,7 +85,19 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 									<div class="single-contact-form">
 										<div class="contact-box name">
 											<input type="text" name="email" id="email" placeholder="Your Email*" 
-                                            style="width:100%">
+                                            style="width:45%">
+
+											<button type="button" class="fv-btn email_sent_otp height_60px" 
+											onclick="email_sent_otp()">Send OTP</button>
+
+											<input type="text" id="email_otp" placeholder="OTP" 
+                                            style="width:45%" class="email_verify_otp">
+
+											<button type="button" class="fv-btn email_verify_otp height_60px" 
+											onclick="email_verify_otp()">Verify OTP</button>
+
+											<span id="email_otp_result"></span>
+
 										</div>
                                         <span class="field_error" id="email_error"></span>
 									</div>
@@ -116,6 +128,56 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 					
             </div>
         </section>
+		<script>
+			function email_sent_otp(){
+				jQuery('#email_error').html('');
+				var email=jQuery('#email').val();
+				if(email==''){
+					jQuery('#email_error').html('Please enter email id');
+				}else{
+					//now we write in ajax to generate opt for email and phone 
+					jQuery.ajax({
+						url:'send_otp.php',
+						type='post',
+						data:'email='+email+'&type=email',
+						success=function(result){
+							if(result=='done'){
+								jQuery('#email').attr('disabled',true);
+								jQuery('.email_verify_otp').show();
+								jQuery('.email_sent_otp').hide();
+							}else{
+								jQuery('#email_error').html('Please try after sometime');
+							}
+							
+						}
+					});
+					
+				}
+			}
+			function email_verify_otp(){
+				jQuery('#email_error').html('');
+				var email_otp=jQuery('#email_otp').val();
+				if(email_otp==''){
+					jQuery('#email_error').html('Please enter OTP');
+				}else{
+					jQuery.ajax({
+						url:'check_otp.php',
+						type='post',
+						data:'otp='+email_otp+'&type=email',
+						success=function(result){
+							if(result=='done'){
+								jQuery('.email_verify_otp').hide();
+								jQuery('#email_otp_result').html('Email id verified');
+							}else{
+								jQuery('#email_error').html('Please enter valid OTP');
+							}
+							
+						}
+					});
+					
+				}
+			}
+		</script>
         <!-- End Contact Area -->
         <!-- End Banner Area -->
        

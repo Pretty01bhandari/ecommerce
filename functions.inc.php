@@ -17,13 +17,16 @@ function get_safe_value($con,$str){
     }
 }
 
-function get_product($con,$limit='',$cat_id='',$product_id='',$search_str='',$sort_order=''){
+function get_product($con,$limit='',$cat_id='',$product_id='',$search_str='',$sort_order='',$is_best_seller=''){
     $sql="select product.*,categories.categories from product,categories where product.status=1 ";
     if($cat_id!=''){
         $sql.=" and product.categories_id=$cat_id "; 
     }
     if($product_id!=''){
         $sql.=" and product.id=$product_id "; 
+    }
+    if($is_best_seller!=''){
+        $sql.=" and product.best_seller=1 "; 
     }
     $sql.=" and product.categories_id=categories.id ";
     if($search_str!=''){
