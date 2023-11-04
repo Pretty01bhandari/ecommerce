@@ -3574,3 +3574,13 @@ ul.htc__instagram__posts.owl-carousel li img {
     font-size: 20px;
     font-weight: bold;
 }
+
+.mobile_verify_otp{
+    display: none;
+}
+
+#mobile_otp_result{
+    margin-top: 15px;
+    font-size: 20px;
+    font-weight: bold;
+}

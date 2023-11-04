@@ -103,13 +103,28 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 									</div>
 									<div class="single-contact-form">
 										<div class="contact-box name">
-											<input type="text" name="mobile" id="mobile" placeholder="Your Mobile*" style="width:100%">
+											<input type="text" name="mobile" id="mobile" placeholder="Your Mobile*" 
+											style="width:45%">
+
+											<button type="button" class="fv-btn mobile_sent_otp height_60px" 
+											onclick="mobile_sent_otp()">Send OTP</button>
+
+											<input type="text" id="mobile_otp" placeholder="OTP" 
+                                            style="width:45%" class="mobile_verify_otp">
+
+											<button type="button" class="fv-btn mobile_verify_otp height_60px" 
+											onclick="mobile_verify_otp()">Verify OTP</button>
+
+											<span id="mobile_otp_result"></span>
+
+
                                        </div>
                                        <span class="field_error" id="mobile_error"></span>
 									</div>
 									<div class="single-contact-form">
 										<div class="contact-box name">
-											<input type="password" name="password" id="password" placeholder="Your Password*" style="width:100%">
+											<input type="password" name="password" id="password" 
+											placeholder="Your Password*" style="width:100%">
                                         </div>
                                         <span class="field_error" id="password_error"></span>
 									</div>
@@ -136,22 +151,27 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 					jQuery('#email_error').html('Please enter email id');
 				}else{
 					//now we write in ajax to generate opt for email and phone 
+					jQuery('.email_sent_otp').html('Please wait..');
+					jQuery('.email_sent_otp').attr('disabled',true);
+					jQuery('.email_sent_otp');
 					jQuery.ajax({
 						url:'send_otp.php',
-						type='post',
+						type:'post',
 						data:'email='+email+'&type=email',
-						success=function(result){
+						success:function(result){
 							if(result=='done'){
 								jQuery('#email').attr('disabled',true);
 								jQuery('.email_verify_otp').show();
 								jQuery('.email_sent_otp').hide();
 							}else{
+								jQuery('.email_sent_otp').html('Send OTP');
+								jQuery('.email_sent_otp').attr('disabled',false);
 								jQuery('#email_error').html('Please try after sometime');
 							}
-							
+						
 						}
 					});
-					
+				
 				}
 			}
 			function email_verify_otp(){
@@ -162,14 +182,68 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 				}else{
 					jQuery.ajax({
 						url:'check_otp.php',
-						type='post',
+						type:'post',
 						data:'otp='+email_otp+'&type=email',
-						success=function(result){
+						success:function(result) {
 							if(result=='done'){
 								jQuery('.email_verify_otp').hide();
 								jQuery('#email_otp_result').html('Email id verified');
 							}else{
 								jQuery('#email_error').html('Please enter valid OTP');
+							}
+							
+						}
+					});
+					
+				}
+			}
+
+			function mobile_sent_otp(){
+				jQuery('#mobile_error').html('');
+				var mobile=jQuery('#mobile').val();
+				if(email==''){
+					jQuery('#mobile_error').html('Please enter mobile number');
+				}else{
+					//now we write in ajax to generate opt for mobile and phone 
+					jQuery('.mobile_sent_otp').html('Please wait..');
+					jQuery('.mobile_sent_otp').attr('disabled',true);
+					jQuery('.mobile_sent_otp');
+					jQuery.ajax({
+						url:'send_otp.php',
+						type:'post',
+						data:'mobile='+mobile+'&type=mobile',
+						success:function(result){
+							if(result=='done'){
+								jQuery('#mobile').attr('disabled',true);
+								jQuery('.mobile_verify_otp').show();
+								jQuery('.mobile_sent_otp').hide();
+							}else{
+								jQuery('.mobile_sent_otp').html('Send OTP');
+								jQuery('.mobile_sent_otp').attr('disabled',false);
+								jQuery('#mobile_error').html('Please try after sometime');
+							}
+						
+						}
+					});
+				
+				}
+			}
+			function mobile_verify_otp(){
+				jQuery('#mobile_error').html('');
+				var mobile_otp=jQuery('#mobile_otp').val();
+				if(mobile_otp==''){
+					jQuery('#mobile_error').html('Please enter OTP');
+				}else{
+					jQuery.ajax({
+						url:'check_otp.php',
+						type:'post',
+						data:'otp='+mobile_otp+'&type=mobile',
+						success:function(result) {
+							if(result=='done'){
+								jQuery('.mobile_verify_otp').hide();
+								jQuery('#mobile_otp_result').html('Mobile number verified');
+							}else{
+								jQuery('#mobile_error').html('Please enter valid OTP');
 							}
 							
 						}
