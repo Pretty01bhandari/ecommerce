@@ -55,6 +55,7 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 									
 									<div class="contact-btn">
 										<button type="button" class="fv-btn" onclick="user_login()">Login</button>
+										<a href="forget_password.php" class="forget_password">Forget Password?</a>
 									</div>
 								</form>
 								<div class="form-output login_msg field_error">
@@ -130,7 +131,8 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 									</div>
 									
 									<div class="contact-btn">
-										<button type="button" class="fv-btn" onclick="user_register()">Register</button>
+										<button type="button" class="fv-btn" onclick="user_register()"
+										 disabled id="btn_register">Register</button>
 									</div>
 								</form>
 								<div class="form-output register_msg">
@@ -143,6 +145,9 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 					
             </div>
         </section>
+		<!-- to check wether both the otp's are verified or not -->
+		<input type="hidden" id="is_email_verified"/>
+		<input type="hidden" id="is_mobile_verified"/>
 		<script>
 			function email_sent_otp(){
 				jQuery('#email_error').html('');
@@ -163,6 +168,11 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 								jQuery('#email').attr('disabled',true);
 								jQuery('.email_verify_otp').show();
 								jQuery('.email_sent_otp').hide();
+
+							}else if(result=='email_present'){
+								jQuery('.email_sent_otp').html('Send OTP');
+								jQuery('.email_sent_otp').attr('disabled',false);
+								jQuery('#email_error').html('Email id already exist');
 							}else{
 								jQuery('.email_sent_otp').html('Send OTP');
 								jQuery('.email_sent_otp').attr('disabled',false);
@@ -188,6 +198,11 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 							if(result=='done'){
 								jQuery('.email_verify_otp').hide();
 								jQuery('#email_otp_result').html('Email id verified');
+								jQuery('#is_email_verified').val('1');
+								if(jQuery('#is_mobile_verified').val()==1){
+									jQuery('#btn_register').attr('disabled',false);
+							}
+							
 							}else{
 								jQuery('#email_error').html('Please enter valid OTP');
 							}
@@ -201,7 +216,7 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 			function mobile_sent_otp(){
 				jQuery('#mobile_error').html('');
 				var mobile=jQuery('#mobile').val();
-				if(email==''){
+				if(mobile==''){
 					jQuery('#mobile_error').html('Please enter mobile number');
 				}else{
 					//now we write in ajax to generate opt for mobile and phone 
@@ -217,6 +232,10 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 								jQuery('#mobile').attr('disabled',true);
 								jQuery('.mobile_verify_otp').show();
 								jQuery('.mobile_sent_otp').hide();
+							}else if(result=='mobile_present'){
+								jQuery('.mobile_sent_otp').html('Send OTP');
+								jQuery('.mobile_sent_otp').attr('disabled',false);
+								jQuery('#mobile_error').html('Mobile numberalready exist');
 							}else{
 								jQuery('.mobile_sent_otp').html('Send OTP');
 								jQuery('.mobile_sent_otp').attr('disabled',false);
@@ -224,6 +243,7 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 							}
 						
 						}
+					
 					});
 				
 				}
@@ -242,6 +262,10 @@ if(isset($_SESSION['USER_LOGIN']) && $_SESSION['USER_LOGIN']=='yes'){
 							if(result=='done'){
 								jQuery('.mobile_verify_otp').hide();
 								jQuery('#mobile_otp_result').html('Mobile number verified');
+								jQuery('#is_mobile_verified').val('1');
+							if(jQuery('#is_email_verified').val()==1){
+									jQuery('#btn_register').attr('disabled',false);
+								}
 							}else{
 								jQuery('#mobile_error').html('Please enter valid OTP');
 							}
