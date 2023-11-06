@@ -3585,7 +3585,11 @@ ul.htc__instagram__posts.owl-carousel li img {
     font-weight: bold;
 }
 
-.forget_password{
+.forgot_password{
     margin-left: 10px;
+    font-size: 20px;
+}
+
+.password_label{
     font-size: 20px;
 }
