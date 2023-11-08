@@ -23,6 +23,7 @@
         if($check>0) {
             $row=mysqli_fetch_assoc($res);
             $categories_id=$row['categories_id'];
+            $sub_categories_id=$row['sub_categories_id'];
             $name=$row['name'];
             $mrp=$row['mrp'];
             $price=$row['price'];
@@ -41,6 +42,7 @@
     //where product ko data gets submit
     if(isset($_POST['submit'])){
         $categories_id=get_safe_value($con,$_POST['categories_id']);
+        $sub_categories_id=get_safe_value($con,$_POST['sub_categories_id']);
         $name=get_safe_value($con,$_POST['name']);
         $mrp=get_safe_value($con,$_POST['mrp']);
         $price=get_safe_value($con,$_POST['price']);
@@ -66,37 +68,35 @@
             }else{
                 $msg="Product already exists";
             }
-            
         }
-
         if($_FILES['image']['type']!='image/png' && $_FILES['image']['type']!='image/jpg' && 
         $_FILES['image']['type']!='image/jpeg'){
             $msg="Please select only png,jpg and jpeg image format";
         }
-        
         if($msg=='') {
             if(isset($_GET['id']) && $_GET['id']!=''){
                 if($_FILES['image']['name']!=''){
-                    $image=rand(11111111,99999999)."_".$_FILES['image']['name'];
+                    $image=rand(11111111,99999999).'_'.$_FILES['image']['name'];
                 move_uploaded_file($_FILES['image']['tmp_name'],PRODUCT_IMAGE_SERVER_PATH.$image);
                 $update_sql="update product set categories_id='$categories_id',name='$name',
                 mrp='$mrp',price='$price',qty='$qty',short_desc='$short_desc',description='$description'
                 ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',image='$image',
-                best_seller='$best_seller' where id='$id'";
+                best_seller='$best_seller',sub_categories_id='$sub_categories_id' where id='$id'";
                 }else{
                     $update_sql="update product set categories_id='$categories_id',name='$name',
                 mrp='$mrp',price='$price',qty='$qty',short_desc='$short_desc',description='$description'
-                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',best_seller='$best_seller
-                 where id='$id'";
+                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',best_seller='$best_seller,
+                sub_categories_id='$sub_categories_id' where id='$id'";
                 }
                 mysqli_query($con,$update_sql);
                }else{
-                $image=rand(11111111,99999999)."_".$_FILES['image']['name'];
+                $image=rand(11111111,99999999).'_'.$_FILES['image']['name'];
                 move_uploaded_file($_FILES['image']['tmp_name'],PRODUCT_IMAGE_SERVER_PATH.$image);
+                
                 mysqli_query($con,"insert into product(categories_id,name,mrp,price,qty,short_desc,
-                description,meta_title,meta_desc,meta_keyword,status,image)
+                description,meta_title,meta_desc,meta_keyword,status,image,best_seller,sub_categories_id)
                 values('$categories_id','$name','$mrp','$price','$qty','$short_desc','$description',
-                '$meta_title','$meta_desc','$meta_keyword',1,'$image','$best_seller')");
+                '$meta_title','$meta_desc','$meta_keyword',1,'$image','$best_seller','$sub_categories_id')");
 
                }
                header('location:product.php');
@@ -115,7 +115,8 @@
                            <div class="form-group">
                             <label for="categories" class=" form-control-label">Categories
                             </label>
-                            <select class="form-control" name="categories_id">
+                            <select class="form-control" name="categories_id" id="categories_id"
+                             onchange="get_sub_cat()" required>
                                 <option>Select Category</option>
                                 <?php
                                 $res=mysqli_query($con,"select id,categories from categories 
@@ -128,9 +129,15 @@
                                         echo "<option value=".$row['id'].">".$row['categories'].
                                         "</option>";
                                     }
-                                    
                                 }
                                 ?>
+                            </select>
+                            </div>
+                            <div class="form-group">
+                            <label for="categories" class=" form-control-label">Sub Categories
+                            </label>
+                            <select class="form-control" name="sub_categories_id" id="sub_categories_id">
+                            <option>Select Sub Category</option>
 
                             </select>
                             </div>
@@ -158,69 +165,52 @@
                                 }
                                 ?>
                             </select>
-
                             <div class="form-group">
                             <label for="categories" class=" form-control-label">MRP
                             </label>
                             <input type="text" name="mrp" placeholder="Enter product mrp" class="
                             form-control" required value="<?php echo $mrp ?>">
                             </div>
-
                             <div class="form-group">
                             <label for="categories" class=" form-control-label">Price
                             </label>
                             <input type="text" name="price" placeholder="Enter product price" class="
                             form-control" required value="<?php echo $price ?>">
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Qty
-                            </label>
+                            <label for="categories" class=" form-control-label">Qty</label>
                             <input type="text" name="qty" placeholder="Enter qty" class="
                             form-control" required value="<?php echo $qty?>">
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Image
-                            </label>
+                            <label for="categories" class=" form-control-label">Image</label>
                             <input type="file" name="image" class="form-control" <?php echo $image_required?>>
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Short Description
-                            </label>
+                            <label for="categories" class=" form-control-label">Short Description</label>
                             <textarea name="short_desc" placeholder="Enter product short_description" class="
                             form-control" required><?php echo $short_desc ?></textarea>
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Description
-                            </label>
+                            <label for="categories" class=" form-control-label">Description</label>
                             <textarea  name="description" placeholder="Enter product description"
                              class="form-control"><?php echo $description ?></textarea>
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Meta Title
-                            </label>
+                            <label for="categories" class=" form-control-label">Meta Title</label>
                             <textarea  name="meta_title" placeholder="Enter product meta title"
                              class="form-control"><?php echo $meta_title ?></textarea>
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Meta Description
-                            </label>
+                            <label for="categories" class=" form-control-label">Meta Description</label>
                             <textarea  name="meta_desc" placeholder="Enter product meta description"
                              class="form-control" ><?php echo $meta_desc ?></textarea>
                             </div>
-
                             <div class="form-group">
-                            <label for="categories" class=" form-control-label">Meta Keyword
-                            </label>
+                            <label for="categories" class=" form-control-label">Meta Keyword</label>
                             <textarea  name="meta_keyword" placeholder="Enter product meta keyword"
                              class="form-control"><?php echo $meta_keyword ?></textarea>
                             </div>
-
                             <button id="payment-button" name="submit" type="submit" class="btn btn-lg btn-info 
                               btn-block">
                              <span id="payment-button-amount">Submit</span>
@@ -233,6 +223,30 @@
                </div>
             </div>
          </div>
-     <?php
-    require('footer.inc.php');
+
+         <script>
+            function get_sub_cat(){
+                var categories_id=jQuery('#categories_id').val();
+                jQuery.ajax({
+                    url:'get_sub_cat.php',
+                    type:'post',
+                    data:'categories_id='+categories_id,
+                    success:function(result){
+                        jQuery('#sub_categories_id').html(result);
+                    }
+                });
+            }
+            <?php
+            if(isset($_GET['id'])){
+            ?>
+            get_sub_cat();
+            <?php } ?>
+         </script>
+<?php
+if(isset($_GET['id'])){
     ?>
+    get_sub_cat();
+    <?php
+}
+require('footer.inc.php');
+?>

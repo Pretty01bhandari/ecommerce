@@ -22,7 +22,8 @@
 			mysqli_query($con,$delete_sql);
 		}
 	}
-	$sql="select * from sub_categories order by sub_categories asc";
+	$sql="select sub_categories.*,categories.categories from sub_categories,categories where categories.id=
+	sub_categories.categories_id order by sub_categories.sub_categories asc";
 	$res=mysqli_query($con,$sql);
 	
     ?>
@@ -54,7 +55,7 @@
 								<tr>
 									<td class="serial"><?php echo $i?></td>
 									<td><?php echo $row['id']?></td>
-									<td><?php echo $row['categories_id']?></td>
+									<td><?php echo $row['categories']?></td>
 									<td><?php echo $row['sub_categories']?></td>
 									<td>
 									<?php 
