@@ -20,7 +20,9 @@ if(isset($_SESSION['USER_LOGIN'])){
 		mysqli_query($con,"delete from wishlist where id='$wid' and user_id='$uid'");
 	}
 
-	$wishlist_count=mysqli_num_rows(mysqli_query($con,"select product.name,product.image,product.price,product.mrp,wishlist.id from product,wishlist where wishlist.product_id=product.id and wishlist.user_id='$uid'"));
+	$wishlist_count=mysqli_num_rows(mysqli_query($con,"select product.name,product.image,product.price,
+	product.mrp,wishlist.id from product,wishlist where wishlist.product_id=product.id and wishlist.user_id
+	='$uid'"));
 }
 
 $script_name=$_SERVER['SCRIPT_NAME'];
@@ -100,7 +102,25 @@ if($mypage=='product.php'){
                                         <?php
 										foreach($cat_arr as $list){
 											?>
-											<li><a href="categories.php?id=<?php echo $list['id']?>"><?php echo $list['categories']?></a></li>
+											<li class="drop"><a href="categories.php?id=<?php echo $list['id']?>">
+												<?php echo $list['categories']?></a>
+												<?php 
+												$cat_id=$list['id'];
+												$sub_cat_res=mysqli_query($con,"select * from sub_categories where 
+												status='1' and categories_id='$cat_id'");
+												if(mysqli_num_rows($sub_cat_res)>0){
+												?>
+
+												<ul class="dropdown">
+													<?php
+													while($sub_cat_rows=mysqli_fetch_assoc($sub_cat_res)){
+													echo '<li><a href="categories.php?id='.$list['id'].'&sub_categories='.
+													$sub_cat_rows['id'].'">'.$sub_cat_rows['sub_categories'].'</a></li>';
+													}
+													?>
+                                            	</ul>
+												<?php } ?>
+											</li>
 											<?php
 										}
 										?>
@@ -115,7 +135,13 @@ if($mypage=='product.php'){
                                             <?php
 											foreach($cat_arr as $list){
 												?>
-												<li><a href="categories.php?id=<?php echo $list['id']?>"><?php echo $list['categories']?></a></li>
+												<li class="drop"><a href="categories.php?id=<?php echo 
+												$list['id']?>"><?php echo $list['categories']?></a>
+													<ul class="dropdown">
+                                                		<li><a href="blog.html">Blog Grid</a></li>
+                                                		<li><a href="blog-details.html">Blog Details</a></li>
+                                            		</ul>	
+												</li>
 												<?php
 											}
 											?>
@@ -140,15 +166,18 @@ if($mypage=='product.php'){
 										<?php if(isset($_SESSION['USER_LOGIN'])){
 											?>
 											<nav class="navbar navbar-expand-lg navbar-light bg-light">
-											   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+											   <button class="navbar-toggler" type="button" data-toggle="collapse" 
+											   data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" 
+											   aria-expanded="false" aria-label="Toggle navigation">
 												<span class="navbar-toggler-icon"></span>
 											  </button>
 
 											  <div class="collapse navbar-collapse" id="navbarSupportedContent">
 												<ul class="navbar-nav mr-auto">
 												  <li class="nav-item dropdown">
-													<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-													  Account
+													<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" 
+													role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+													 Hi <?php echo $_SESSION['USER_NAME']?>
 													</a>
 													<div class="dropdown-menu" aria-labelledby="navbarDropdown">
 													  <a class="dropdown-item" href="my_order.php">Order</a>

@@ -1,4 +1,5 @@
 <?php
+
     require('top.inc.php');
     $categories_id='';
     $name='';
@@ -12,6 +13,7 @@
     $meta_desc='';
     $meta_keyword='';
     $best_seller='';
+    $sub_categories_id='';
 
     $msg='';
     $image_required='required';
@@ -69,40 +71,47 @@
                 $msg="Product already exists";
             }
         }
-        if($_FILES['image']['type']!='image/png' && $_FILES['image']['type']!='image/jpg' && 
-        $_FILES['image']['type']!='image/jpeg'){
-            $msg="Please select only png,jpg and jpeg image format";
+        if(isset($_GET['id']) && $_GET['id']==0){
+            if($_FILES['image']['type']!='image/png' && $_FILES['image']['type']!='image/jpg' && $_FILES['image']['type']!='image/jpeg'){
+                $msg="Please select only png,jpg and jpeg image format";
+            }
+        }else{
+            if($_FILES['image']['type']!=''){
+                    if($_FILES['image']['type']!='image/png' && $_FILES['image']['type']!='image/jpg' && $_FILES['image']['type']!='image/jpeg'){
+                    $msg="Please select only png,jpg and jpeg image format";
+                }
+            }
         }
-        if($msg=='') {
+    
+        if($msg==''){
             if(isset($_GET['id']) && $_GET['id']!=''){
                 if($_FILES['image']['name']!=''){
-                    $image=rand(11111111,99999999).'_'.$_FILES['image']['name'];
-                move_uploaded_file($_FILES['image']['tmp_name'],PRODUCT_IMAGE_SERVER_PATH.$image);
-                $update_sql="update product set categories_id='$categories_id',name='$name',
-                mrp='$mrp',price='$price',qty='$qty',short_desc='$short_desc',description='$description'
-                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',image='$image',
-                best_seller='$best_seller',sub_categories_id='$sub_categories_id' where id='$id'";
+                    $image=rand(111111111,999999999).'_'.$_FILES['image']['name'];
+                    move_uploaded_file($_FILES['image']['tmp_name'],PRODUCT_IMAGE_SERVER_PATH.$image);
+                    $update_sql="update product set categories_id='$categories_id',name='$name',mrp='$mrp'
+                    ,price='$price',qty='$qty',short_desc='$short_desc',description='$description',
+                    meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',image='$image'
+                    ,best_seller='$best_seller' where id='$id'";
                 }else{
-                    $update_sql="update product set categories_id='$categories_id',name='$name',
-                mrp='$mrp',price='$price',qty='$qty',short_desc='$short_desc',description='$description'
-                ,meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',best_seller='$best_seller,
-                sub_categories_id='$sub_categories_id' where id='$id'";
+                    $update_sql="update product set categories_id='$categories_id',name='$name',mrp='$mrp',
+                    price='$price',qty='$qty',short_desc='$short_desc',description='$description',
+                    meta_title='$meta_title',meta_desc='$meta_desc',meta_keyword='$meta_keyword',
+                    best_seller='$best_seller' where id='$id'";
                 }
                 mysqli_query($con,$update_sql);
-               }else{
-                $image=rand(11111111,99999999).'_'.$_FILES['image']['name'];
+            }else{
+                $image=rand(111111111,999999999).'_'.$_FILES['image']['name'];
                 move_uploaded_file($_FILES['image']['tmp_name'],PRODUCT_IMAGE_SERVER_PATH.$image);
-                
                 mysqli_query($con,"insert into product(categories_id,name,mrp,price,qty,short_desc,
-                description,meta_title,meta_desc,meta_keyword,status,image,best_seller,sub_categories_id)
-                values('$categories_id','$name','$mrp','$price','$qty','$short_desc','$description',
-                '$meta_title','$meta_desc','$meta_keyword',1,'$image','$best_seller','$sub_categories_id')");
-
-               }
-               header('location:product.php');
-                die();
+                description,meta_title,meta_desc,meta_keyword,status,image,best_seller) values
+                ('$categories_id','$name','$mrp','$price','$qty','$short_desc','$description','$meta_title',
+                '$meta_desc','$meta_keyword',1,'$image','$best_seller')");
+            }
+            header('location:product.php');
+            die();
         }
     }
+    
 ?>
 <div class="content pb-0">
             <div class="animated fadeIn">
@@ -115,8 +124,8 @@
                            <div class="form-group">
                             <label for="categories" class=" form-control-label">Categories
                             </label>
-                            <select class="form-control" name="categories_id" id="categories_id"
-                             onchange="get_sub_cat()" required>
+                            <select class="form-control" name="categories_id" id=
+                            "categories_id" onchange="get_sub_cat('')" required>
                                 <option>Select Category</option>
                                 <?php
                                 $res=mysqli_query($con,"select id,categories from categories 
@@ -225,28 +234,26 @@
          </div>
 
          <script>
-            function get_sub_cat(){
+            function get_sub_cat(sub_cat_id){
                 var categories_id=jQuery('#categories_id').val();
                 jQuery.ajax({
                     url:'get_sub_cat.php',
                     type:'post',
-                    data:'categories_id='+categories_id,
+                    data:'categories_id='+categories_id+'&sub_cat_id='+sub_cat_id,
                     success:function(result){
                         jQuery('#sub_categories_id').html(result);
                     }
                 });
             }
-            <?php
-            if(isset($_GET['id'])){
-            ?>
-            get_sub_cat();
-            <?php } ?>
+            
          </script>
 <?php
-if(isset($_GET['id'])){
-    ?>
-    get_sub_cat();
-    <?php
-}
 require('footer.inc.php');
 ?>
+<script>
+<?php
+    if(isset($_GET['id'])){
+    ?>
+    get_sub_cat('<?php echo $sub_categories_id?>');
+    <?php } ?>
+</script>

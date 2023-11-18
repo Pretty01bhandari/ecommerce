@@ -22,7 +22,8 @@ if(isset($_POST['submit'])){
         $price=$productArr[0]['price'];
         $qty=$val['qty'];
         $cart_total=$cart_total+($price*$qty);
-}
+    
+    }
     $total_price=$cart_total;
     $payment_status='pending';
     if($payment_type=='cod'){
@@ -261,14 +262,14 @@ echo '<script>document.getElementById("payuForm").submit();</script>';
                                         <div class="paymentinfo">
                                             <div class="single-method">
                                              COD <input type="radio" name="payment_type" value="COD" required/>
-                                             &nbsp:&nbsp:PayU <input type="radio" name="payment_type" value="payu" required/>
+                                             &nbsp;&nbsp;PayU <input type="radio" name="payment_type" value="payu" required/>
                                             </div>
                                             <div class="single-method">
                                                 
                                             </div>
                                         </div>
                                     </div>
-                                    <input type="submit" name="submit"/>
+                                    <input type="submit" name="submit" class="fv-btn"/>
                                     </form>
                                 </div>
                             </div>

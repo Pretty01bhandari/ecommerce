@@ -14,7 +14,6 @@
 			$update_status_sql="update product set status='$status' where id='$id'";
 			mysqli_query($con,$update_status_sql);
 		}
-	
 
 		if($type=='delete'){
 			$id=get_safe_value($con,$_GET['id']);

@@ -1,7 +1,20 @@
 <?php 
 require('top.php');
+
+if(!isset($_GET['id']) && $_GET['id']!=''){
+	?>
+	<script>
+	 window.location.href='index.php';
+	</script>
+	<?php
+ }
+
 $cat_id=mysqli_real_escape_string($con,$_GET['id']);
 
+$sub_categories='';
+if(isset($_GET['sub_categories'])){
+    $sub_categories=mysqli_real_escape_string($con,$_GET['sub_categories']);
+}
 //to keep my selected sorting dropdown selected we have to simple initialize four variables
 $price_high_selected="";
 $price_low_selected="";
@@ -30,9 +43,9 @@ if(isset($_GET['sort'])){
     }
 
 }
-
+//to fetch data
 if($cat_id>0){
-    $get_product=get_product($con,'',$cat_id,'','',$sort_order);
+    $get_product=get_product($con,'',$cat_id,'','',$sort_order,'',$sub_categories);
 }else{
     ?>
     <script>
