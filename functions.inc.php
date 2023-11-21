@@ -57,5 +57,19 @@ function wishlist_add($con,$uid,$pid){
     mysqli_query($con,"insert into wishlist(user_id,product_id,added_on) values('$uid','$pid','$added_on')");
 }
     
+function productSoldQtyByProductId($con,$pid){
+    $sql="select sum(order_detail.qty) as qty from order_detail,orders where 
+    orders.id=order_detail.order_id and order_detail.product_id=$pid and orders.order_status!=4";
 
+    $res=mysqli_query($con,$sql);
+    $row=mysqli_fetch_assoc($res);
+    return $row['qty'];
+}
+
+function productQty($con,$pid){
+    $sql="select qty from product where id='$pid'";
+    $res=mysqli_query($con,$sql);
+    $row=mysqli_fetch_assoc($res);
+    return $row['qty'];
+}
 ?>

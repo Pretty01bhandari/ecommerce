@@ -1,9 +1,6 @@
     <?php
     require('top.inc.php');
 
-	$sql="select * from users order by id desc";
-	$res=mysqli_query($con,$sql);
-	
     ?>
     <div class="content pb-0">
 	<div class="orders">
@@ -19,7 +16,7 @@
                         <thead>
                              <tr>
                                 <th class="product-thumbnail">Order ID</th>
-                                <th class="product-name"><span class="nobr">Order Date</span></th>
+                                <th class="product-name"><span class="nobr">Product/Qty</span></th>
                                 <th class="product-price"><span class="nobr"> Address </span></th>
                                 <th class="product-stock-stauts"><span class="nobr"> Payment Type </span></th>
                                 <th class="product-stock-stauts"><span class="nobr"> Payment status </span></th>
@@ -28,16 +25,19 @@
                         </thead>
                              </tbody>
                                    <?php
-                                     $res=mysqli_query($con,"select orders.*,order_status.name as 
-                                     order_status_str from orders,order_status
-                                      where order_status.id=orders.order_status order by orders.id desc");
+                                     $res=mysqli_query($con,"select order_detail.qty,product.name,
+                                     orders.*,order_status.name as order_status_str from order_detail
+                                     ,product,orders,order_status where order_status.id=orders.order_status 
+                                     and product.id=order_detail.product_id and orders.id=order_detail.order_id 
+                                     and product.added_by='".$_SESSION['ADMIN_ID']."' order by orders.id desc");
                                       while($row=mysqli_fetch_assoc($res)) {
                                       ?>
                                             <tr>
-                                                <td class="product-add-to-cart"><a href="order_master_details.php?id=
-                                                <?php echo $row['id']?>"><?php echo $row['id']?></a><br/><a href=
-                                                "../order_pdf.php?id=<?php echo $row['id']?>">PDF</a></td>
-                                                <td class="product-name"><?php echo $row['added_on']?></a></td>
+                                                <td class="product-add-to-cart"><?php echo $row['id']?><br/>
+                                                </td>
+                                                <td class="product-name">
+                                                    <?php echo $row['name']?><br/>
+                                                    <?php echo $row['qty']?></td>
                                                 <td class="product-name">
                                                     <?php echo $row['address']?></br>
                                                     <?php echo $row['city']?></br>

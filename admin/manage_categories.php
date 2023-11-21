@@ -1,5 +1,6 @@
 <?php
     require('top.inc.php');
+    isAdmin();
     $categories='';
     $msg='';
     if(isset($_GET['id']) && $_GET['id']!=''){

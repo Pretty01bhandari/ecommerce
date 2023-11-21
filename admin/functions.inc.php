@@ -16,4 +16,23 @@ function get_safe_value($con,$str){
         return mysqli_real_escape_string($con, $str);
     }
 }
+
+function productSoldQtyByProductId($con,$pid){
+    $sql="select sum(order_detail.qty) as qty from order_detail,orders where 
+    orders.id=order_detail.order_id and order_detail.product_id=$pid and orders.order_status!=4";
+
+    $res=mysqli_query($con,$sql);
+    $row=mysqli_fetch_assoc($res);
+    return $row['qty'];
+}
+
+function isAdmin(){
+    if($_SESSION['ADMIN_ROLE']==1){
+        ?>
+        <script>
+            window.location.href='product.php';
+        </script>
+        <?php
+    }
+}
 ?>

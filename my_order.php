@@ -42,7 +42,7 @@ require('top.php');
                                                 <?php
                                                 $uid=$_SESSION['USER_ID'];
                                                 $res=mysqli_query($con,"select orders.*,order_status.name as order_status_str from orders,order_status
-                                                 where orders.user_id='$uid' and order_status.id=orders.order_status");
+                                                 where orders.user_id='$uid' and order_status.id=orders.order_status order by orders.id desc");
                                                 while($row=mysqli_fetch_assoc($res)) {
                                                 ?>
                                             <tr>
