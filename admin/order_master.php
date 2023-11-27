@@ -1,9 +1,6 @@
     <?php
     require('top.inc.php');
-
-	$sql="select * from users order by id desc";
-	$res=mysqli_query($con,$sql);
-	
+    isAdmin();
     ?>
     <div class="content pb-0">
 	<div class="orders">

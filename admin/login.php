@@ -10,12 +10,16 @@ if(isset($_POST['submit'])){
      $count=mysqli_num_rows($res);
      if($count>0) {
         $row=mysqli_fetch_assoc($res);
-        $_SESSION['ADMIN_LOGIN']='yes';
-        $_SESSION['ADMIN_ID']=$row['id'];
-        $_SESSION['ADMIN_USERNAME']=$username;
-        $_SESSION['ADMIN_ROLE']=$row['role'];
+        if($row['status']=='0'){
+         $msg="Account deactivated";
+        }else{
+         $_SESSION['ADMIN_LOGIN']='yes';
+         $_SESSION['ADMIN_ID']=$row['id'];
+         $_SESSION['ADMIN_USERNAME']=$username;
+         $_SESSION['ADMIN_ROLE']=$row['role'];
         header('location:categories.inc.php');
         die();
+        }
      }else{
         $msg="Please enter correct login details";
      }

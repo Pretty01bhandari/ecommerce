@@ -59,7 +59,9 @@ function wishlist_add($con,$uid,$pid){
     
 function productSoldQtyByProductId($con,$pid){
     $sql="select sum(order_detail.qty) as qty from order_detail,orders where 
-    orders.id=order_detail.order_id and order_detail.product_id=$pid and orders.order_status!=4";
+    orders.id=order_detail.order_id and order_detail.product_id=$pid and orders.order_status!=4
+    and ((orders.payment_type='payu' and orders.payment_status='success') or (orders.payment_type='COD' 
+    and orders.payment_status!=''))";
 
     $res=mysqli_query($con,$sql);
     $row=mysqli_fetch_assoc($res);

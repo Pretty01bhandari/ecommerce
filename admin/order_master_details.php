@@ -1,5 +1,6 @@
     <?php
     require('top.inc.php');
+    isAdmin();
     $order_id=get_safe_value($con,$_GET['id']);
     if(isset($_POST['update_order_status'])){
        $update_order_status=$_POST['update_order_status'];
@@ -29,9 +30,10 @@
                     </thead>
                       <tbody>
                             <?php
-                                $res=mysqli_query($con,"select distinct(order_detail.id),order_detail.*,product.name,product.image,orders.address,
+                                $res=mysqli_query($con,"select distinct(order_detail.id),order_detail.*,
+                                product.name,product.image,orders.address,
                                 orders.city,orders.pincode from order_detail,product,orders where 
-                                order_detail.order_id='$order_id' and order_detail.product_id=product.id");
+                                order_detail.order_id='$order_id' and order_detail.product_id=product.id GROUP by order_detail.id");
                                 $total_price=0;
                                 while($row=mysqli_fetch_assoc($res)) {
                                     // retriving the value of address,city & pincode
@@ -66,27 +68,23 @@
                         <strong>Order Status</strong>
                         <!-- order ko status nikaleko -->
                         <?php 
-                        $order_status_arr=mysqli_fetch_assoc(mysqli_query($con,"select order_status.name
-                         from order_status,orders where orders.id='$order_id' and orders.order_status=order_status.id"));
+                        $order_status_arr=mysqli_fetch_assoc(mysqli_query($con,"select order_status.name,
+                        order_status.id as order_status from order_status,orders where orders.id='$order_id' 
+                        and orders.order_status=order_status.id"));
                         echo $order_status_arr['name'];
                         ?>
 
                         <div>
                             <form method="post">
-                            <select class="form-control" name="update_order_status">
+                            <select class="form-control" name="update_order_status" 
+                            id="update_order_status" required onchange="select_status()">
                                 <option>Select Status</option>
                                 <?php
-                                $res=mysqli_query($con,"select * from order_status");
-                                while($row=mysqli_fetch_assoc($res)){
-                                    if($row['id']==$categories_id){
-                                        echo "<option selected value=".$row['id'].">".$row['name'].
-                                        "</option>";
-                                    }else{
-                                        echo "<option value=".$row['id'].">".$row['name'].
-                                        "</option>";
-                                    }
-                                }
-                                ?>
+										$res=mysqli_query($con,"select * from order_status");
+										while($row=mysqli_fetch_assoc($res)){
+											echo "<option value=".$row['id'].">".$row['name']."</option>";
+										}
+										?>
                             </select>
                             <input type="submit" class="form-control"/>
                             </form>
